@@ -1,1 +1,1 @@
-const    badFormat  =  "test"   ;console.log(   "bad"    )
+const badFormat = "test";console.log("bad");

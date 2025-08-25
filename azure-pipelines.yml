@@ -1,0 +1,127 @@
+# Azure DevOps Pipeline pour Vue.js avec TypeScript
+# Déclenché sur les branches main/master et sur les Pull Requests
+
+trigger:
+- master
+- main
+
+# Pipeline déclenché aussi sur les Pull Requests
+pr:
+- master
+- main
+
+# Machine virtuelle Ubuntu
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '20.x'
+
+stages:
+# ÉTAPE 1: Validation de la qualité du code
+- stage: QualityGate
+  displayName: 'Quality Gate - Tests et Linting'
+  jobs:
+  - job: CodeQuality
+    displayName: 'Code Quality Checks'
+    steps:
+    
+    # Installation de Node.js
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js $(nodeVersion)'
+    
+    # Installation des dépendances
+    - script: |
+        npm ci
+      displayName: 'Install dependencies'
+    
+    # Vérification du formatage avec Prettier
+    - script: |
+        npm run format -- --check
+      displayName: 'Check code formatting (Prettier)'
+      continueOnError: false
+    
+    # Vérification ESLint
+    - script: |
+        npm run lint
+      displayName: 'Run ESLint'
+      continueOnError: false
+    
+    # Vérification TypeScript
+    - script: |
+        npm run type-check
+      displayName: 'TypeScript type checking'
+      continueOnError: false
+    
+    # Exécution des tests unitaires avec couverture
+    - script: |
+        npm run test:unit run -- --coverage --reporter=junit --outputFile=test-results.xml
+      displayName: 'Run unit tests with coverage'
+      continueOnError: false
+    
+    # Publication des résultats de tests
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFiles: 'test-results.xml'
+        testRunTitle: 'Vue.js Unit Tests'
+        failTaskOnFailedTests: true
+    
+    # Publication de la couverture de code
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage/cobertura-coverage.xml'
+        reportDirectory: 'coverage'
+        failIfCoverageEmpty: false
+
+# ÉTAPE 2: Build de l'application
+- stage: Build
+  displayName: 'Build Application'
+  dependsOn: QualityGate
+  condition: succeeded()
+  jobs:
+  - job: BuildApp
+    displayName: 'Build Vue.js Application'
+    steps:
+    
+    # Installation de Node.js
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js $(nodeVersion)'
+    
+    # Installation des dépendances
+    - script: |
+        npm ci
+      displayName: 'Install dependencies'
+    
+    # Build de production
+    - script: |
+        npm run build
+      displayName: 'Build for production'
+    
+    # Publication des artefacts de build
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: 'dist'
+        artifactName: 'vue-app-dist'
+        publishLocation: 'Container'
+      displayName: 'Publish build artifacts'
+
+# ÉTAPE 3: Tests d'intégration (optionnel)
+- stage: IntegrationTests
+  displayName: 'Integration Tests'
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - job: E2ETests
+    displayName: 'End-to-End Tests (Placeholder)'
+    steps:
+    - script: |
+        echo "Placeholder pour les tests E2E futurs"
+        echo "Ici on pourrait ajouter Playwright ou Cypress"
+      displayName: 'E2E Tests placeholder'

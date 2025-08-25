@@ -1,45 +1,242 @@
-# frontend
+# Frontend Vue.js Application
 
-This template should help get you started developing with Vue 3 in Vite.
+Une application Vue.js 3 moderne développée avec TypeScript, Vite et Pinia, incluant une configuration complète de qualité de code et un pipeline CI/CD.
 
-## Recommended IDE Setup
+## 🚀 Technologies Utilisées
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Frontend**: Vue.js 3 (Composition API) + TypeScript
+- **Build Tool**: Vite avec plugins Vue DevTools
+- **State Management**: Pinia
+- **Routing**: Vue Router 4
+- **Testing**: Vitest + Vue Test Utils + jsdom
+- **Quality**: ESLint + Prettier + Husky + lint-staged
+- **CI/CD**: Azure DevOps Pipeline
 
-## Type Support for `.vue` Imports in TS
+## 📁 Structure du Projet
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+```
+frontend/
+├── public/                 # Assets statiques
+├── src/
+│   ├── assets/            # CSS et ressources
+│   ├── components/        # Composants réutilisables
+│   │   ├── __tests__/     # Tests unitaires
+│   │   └── icons/         # Composants d'icônes
+│   ├── router/            # Configuration du routeur
+│   ├── stores/            # Stores Pinia (state management)
+│   └── views/             # Pages de l'application
+├── tests/                 # Configuration des tests
+├── dist/                  # Build de production
+└── coverage/              # Rapports de couverture de code
+```
 
-## Customize configuration
+## 🛠️ Installation et Configuration
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Prérequis
+- Node.js ^20.19.0 || >=22.12.0
+- npm ou yarn
 
-## Project Setup
+### Installation
 
-```sh
+```bash
+# Cloner le projet
+git clone <repository-url>
+cd frontend
+
+# Installer les dépendances
 npm install
+
+# Vérifier l'installation
+npm run type-check
 ```
 
-### Compile and Hot-Reload for Development
+## 🏃‍♂️ Scripts Disponibles
 
-```sh
+### Développement
+
+```bash
+# Serveur de développement avec hot-reload
 npm run dev
+# ➜ http://localhost:5173
+
+# Vérification TypeScript
+npm run type-check
+
+# Tests en mode watch
+npm run test:unit -- --watch
 ```
 
-### Type-Check, Compile and Minify for Production
+### Quality Assurance
 
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
+```bash
+# Linting avec correction automatique
 npm run lint
+
+# Vérification du formatage
+npm run format:check
+
+# Correction du formatage
+npm run format
+
+# Tests unitaires avec couverture
+npm run test:unit -- --coverage
 ```
+
+### Production
+
+```bash
+# Build de production (avec type-check)
+npm run build
+
+# Prévisualisation du build
+npm run preview
+
+# Build uniquement (sans type-check)
+npm run build-only
+```
+
+## 🧪 Tests et Qualité
+
+### Tests Unitaires
+- Framework: **Vitest** avec **Vue Test Utils**
+- Environnement: **jsdom**
+- Couverture: **v8 provider**
+
+```bash
+# Tous les tests
+npm run test:unit
+
+# Tests spécifiques
+npm run test:unit -- HelloWorld.spec.ts
+
+# Tests avec couverture détaillée
+npm run test:unit -- --coverage --reporter=verbose
+```
+
+### Hooks Git (Husky + lint-staged)
+Les hooks s'exécutent automatiquement sur `git commit` :
+- ESLint avec correction automatique
+- Prettier pour le formatage
+- Support: `.vue`, `.js`, `.ts`, `.css`, `.json`, `.md`
+
+### Pipeline CI/CD Azure DevOps
+Le pipeline s'exécute sur les branches `main`/`master` et les PR :
+
+1. **Quality Gate** 🔍
+   - Vérification formatage (Prettier)
+   - Analyse ESLint
+   - Vérification TypeScript
+   - Tests unitaires avec couverture
+   - Publication des métriques
+
+2. **Build** 📦
+   - Compilation optimisée
+   - Publication des artefacts (`dist/`)
+
+3. **Integration Tests** 🔄
+   - Placeholder pour tests E2E futurs
+
+## 🎯 Fonctionnalités Implémentées
+
+### Architecture
+- **Routing SPA**: Navigation fluide entre pages
+- **State Management**: Store counter avec Pinia
+- **Composants modulaires**: Architecture par composants
+- **Responsive Design**: Interface adaptative
+
+### Pages et Composants
+- **HomeView** (`/`): Page d'accueil avec informations Vue.js
+- **AboutView** (`/about`): Page à propos simple
+- **HelloWorld**: Composant avec props typées
+- **TheWelcome**: Grille d'informations écosystème Vue
+
+### State Management
+- **useCounterStore**: Exemple store avec état, computed et actions
+
+## 🔧 Configuration IDE Recommandée
+
+### VSCode + Extensions
+```json
+{
+  "recommendations": [
+    "Vue.volar",
+    "ms-vscode.vscode-typescript-next",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint"
+  ]
+}
+```
+
+**Important**: Désactiver Vetur si installé (conflit avec Volar)
+
+### Support TypeScript pour fichiers .vue
+Le projet utilise `vue-tsc` au lieu de `tsc` pour le support TypeScript complet des fichiers `.vue`.
+
+## 📊 Métriques et Monitoring
+
+### Couverture de Code
+- **Objectif**: >80% de couverture
+- **Rapports**: HTML, JSON, Cobertura
+- **Exclusions**: `node_modules/`, `dist/`, `*.d.ts`, fichiers de test
+
+### Performance
+```bash
+# Analyser la taille du bundle
+npm run build && ls -lh dist/
+
+# Audit avec outils externes (recommandé)
+npx lighthouse http://localhost:5173 --view
+```
+
+## 🚨 Dépannage
+
+### Problèmes Courants
+
+**Tests qui échouent**
+```bash
+# Vérifier la configuration jsdom
+npm run test:unit -- --reporter=verbose
+```
+
+**Erreurs TypeScript**
+```bash
+# Diagnostic complet
+npm run type-check
+```
+
+**Problèmes de formatage**
+```bash
+# Auto-fix complet
+npm run format && npm run lint
+```
+
+**Build qui échoue**
+```bash
+# Debug du build
+npm run build -- --debug
+```
+
+## 📝 Personnalisation
+
+### Configuration Vite
+Voir [Vite Configuration Reference](https://vite.dev/config/)
+
+### Ajout de nouvelles pages
+1. Créer le composant dans `src/views/`
+2. Ajouter la route dans `src/router/index.ts`
+3. Ajouter les liens de navigation si nécessaire
+
+### Ajout de stores Pinia
+1. Créer le store dans `src/stores/`
+2. Utiliser la Composition API avec `defineStore`
+3. Importer dans les composants avec `useStore()`
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/amazing-feature`)
+3. Commit les changements (`git commit -m 'Add amazing feature'`)
+4. Push la branche (`git push origin feature/amazing-feature`)
+5. Ouvrir une Pull Request
+
+Les hooks git garantissent la qualité du code avant chaque commit.

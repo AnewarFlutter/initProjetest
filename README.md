@@ -10,7 +10,7 @@ Une application Vue.js 3 moderne développée avec TypeScript, Vite et Pinia, in
 - **Routing**: Vue Router 4
 - **Testing**: Vitest + Vue Test Utils + jsdom
 - **Quality**: ESLint + Prettier + Husky + lint-staged
-- **CI/CD**: Azure DevOps Pipeline
+- **CI/CD**: GitHub Actions (à venir)
 
 ## 📁 Structure du Projet
 
@@ -119,22 +119,24 @@ Les hooks s'exécutent automatiquement sur `git commit` :
 - Prettier pour le formatage
 - Support: `.vue`, `.js`, `.ts`, `.css`, `.json`, `.md`
 
-### Pipeline CI/CD Azure DevOps
-Le pipeline s'exécute sur les branches `main`/`master` et les PR :
+### CI/CD avec GitHub Actions
+Le pipeline GitHub Actions sera configuré pour remplacer le pipeline Azure DevOps :
 
-1. **Quality Gate** 🔍
-   - Vérification formatage (Prettier)
-   - Analyse ESLint
-   - Vérification TypeScript
-   - Tests unitaires avec couverture
-   - Publication des métriques
+**Simulation locale du pipeline** :
+```bash
+# Étapes complètes de validation
+npm ci
+npm run format:check
+npm run lint  
+npm run type-check
+npm run test:unit -- --coverage
+npm run build
+```
 
-2. **Build** 📦
-   - Compilation optimisée
-   - Publication des artefacts (`dist/`)
-
-3. **Integration Tests** 🔄
-   - Placeholder pour tests E2E futurs
+**Workflow prévu** :
+- Quality Gate (format, lint, types, tests)
+- Build de production avec artefacts
+- Tests E2E avec Playwright/Cypress (futur)
 
 ## 🎯 Fonctionnalités Implémentées
 

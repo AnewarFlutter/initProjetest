@@ -15,7 +15,7 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "format:check": "prettier --check src/",
+    "format:check": "prettier --check \"src/**/*.{vue,js,ts}\"",
     "prepare": "husky"
   },
   "dependencies": {

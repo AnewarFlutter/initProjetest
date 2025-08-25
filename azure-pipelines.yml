@@ -1,6 +1,4 @@
-# Pipeline Azure DevOps avec agent auto-hébergé temporaire
-# À utiliser en attendant l'approbation du parallélisme Microsoft
-
+# Pipeline corrigé - Utilise les agents Microsoft hébergés
 trigger:
 - master
 - main
@@ -9,52 +7,48 @@ pr:
 - master
 - main
 
-# Utilisation d'un agent auto-hébergé au lieu d'un agent Microsoft
-pool: 
-  name: 'Default'  # Nom du pool d'agents auto-hébergés
+# IMPORTANT: Utiliser vmImage au lieu du pool Default
+pool:
+  vmImage: 'ubuntu-latest'
 
 variables:
   nodeVersion: '20.x'
 
-stages:
-- stage: QualityGate
-  displayName: 'Quality Gate - Tests et Linting'
-  jobs:
-  - job: CodeQuality
-    displayName: 'Code Quality Checks'
-    steps:
+jobs:
+- job: CodeQuality
+  displayName: 'Code Quality Checks'
+  steps:
+  
+  # Installation de Node.js
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(nodeVersion)
+    displayName: 'Install Node.js $(nodeVersion)'
+  
+  # Installation des dépendances
+  - script: npm ci
+    displayName: 'Install dependencies'
     
-    # Vérification que Node.js est installé
-    - script: |
-        node --version
-        npm --version
-      displayName: 'Check Node.js version'
-    
-    # Installation des dépendances
-    - script: |
-        npm ci
-      displayName: 'Install dependencies'
-    
-    # Vérification ESLint
-    - script: |
-        npm run lint
-      displayName: 'Run ESLint'
-      continueOnError: false
-    
-    # Vérification TypeScript
-    - script: |
-        npm run type-check
-      displayName: 'TypeScript type checking'
-      continueOnError: false
-    
-    # Exécution des tests unitaires
-    - script: |
-        npm run test:unit run
-      displayName: 'Run unit tests'
-      continueOnError: false
-    
-    # Build de l'application
-    - script: |
-        npm run build
-      displayName: 'Build application'
-      continueOnError: false
+  # Linting ESLint
+  - script: npm run lint
+    displayName: 'Run ESLint'
+    continueOnError: false
+  
+  # Vérification TypeScript
+  - script: npm run type-check
+    displayName: 'TypeScript type checking'
+    continueOnError: false
+  
+  # Tests unitaires
+  - script: npm run test:unit run
+    displayName: 'Run unit tests'
+    continueOnError: false
+  
+  # Build de l'application
+  - script: npm run build
+    displayName: 'Build application'
+    continueOnError: false
+  
+  # Message de succès
+  - script: echo "✅ All quality checks passed!"
+    displayName: 'Pipeline completed successfully'

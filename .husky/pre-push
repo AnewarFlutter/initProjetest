@@ -1,0 +1,7 @@
+# Créer le fichier pre-push
+echo '#!/usr/bin/env sh
+echo "🚀 Running pre-push checks..."
+npm run build && npm run test:unit run' > .husky/pre-push
+
+# Rendre le fichier exécutable
+chmod +x .husky/pre-push
